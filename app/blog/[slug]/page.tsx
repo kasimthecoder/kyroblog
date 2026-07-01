@@ -11,20 +11,14 @@ interface BlogPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const result = await getAllPosts(1, 100);
-  return result?.posts.map((post) => ({ slug: post.slug })) ?? [];
-}
 export async function generateMetadata({
   params,
 }: BlogPageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-
   if (!post) {
     return { title: "Post not found" };
   }
-
   return {
     title: post.title,
     description: post.excerpt,
@@ -52,11 +46,9 @@ export async function generateMetadata({
 export default async function BlogPostPage({ params }: BlogPageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-
   if (!post) {
     notFound();
   }
-
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -69,7 +61,6 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
       name: post.author,
     },
   };
-
   return (
     <article className="mx-auto max-w-5xl px-6 py-16">
       <script
